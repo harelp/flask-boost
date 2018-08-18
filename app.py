@@ -1,6 +1,92 @@
-from flask import Flask
+import sys
+from flask import Flask, render_template, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy, functools
+from sqlalchemy import func
+from flask_bootstrap import Bootstrap
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField
+from wtforms.validators import InputRequired, Email, Length
+sys.path.append("/Users/brocks/boost/")
+from fboost import create_app
+from passlib.hash import sha256_crypt
 
-app = Flask(__name__)
+app = create_app()
+db = SQLAlchemy(app)
+db.init_app(app)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+Bootstrap(app)
+
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True)
+    email = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(80))
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=20)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    remember = BooleanField('Remember Me')
+
+class RegisterForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=20)])
+    email = StringField('email', validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        submitted_username = form.username.data
+        submitted_username = str(submitted_username)
+        submitted_username = submitted_username.lower()
+
+        app.logger.info(submitted_username)
+        user = User.query.filter(func.lower(User.username)==submitted_username).first()
+
+        if user.username.lower() == submitted_username.lower():
+            if sha256_crypt.verify(form.password.data, user.password):
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('userdashboard'))
+            else:
+                 return '<h1> You\'re stupid </h1>'
+        else:
+            return '<h1> Invalid Login </h1>'
+
+    return render_template('login.html', form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        hash_password = sha256_crypt.hash(form.password.data)
+        new_user = User(username=form.username.data, email=form.email.data, password=hash_password)
+        db.session.add(new_user)
+        db.session.commit()
+        return '<h1> New user has been created </h1>'
+        #return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
+
+    return render_template('register.html', form=form)
+
+@app.route('/userdashboard')
+@login_required
+def userdashboard():
+    return render_template('userdashboard.html', name=current_user.username)
+
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
