@@ -11,9 +11,11 @@ sys.path.append("/Users/brocks/boost/")
 from fboost import create_app, create_db
 from fboost.boostforms import LoginForm, RegisterForm
 from passlib.hash import sha256_crypt
+from flask_socketio import SocketIO
 
 app = create_app()
 db = create_db(app)
+socketio = SocketIO(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -77,7 +79,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('login'))
-        
+
     return render_template('register.html', form=form)
 
 @app.route('/userdashboard')
@@ -85,6 +87,19 @@ def register():
 def userdashboard():
     return render_template('userdashboard.html', name=current_user.username)
 
+@app.route('/chat')
+@login_required
+def usertobooster_chat():
+    return render_template('usertobooster.html', name=current_user.username)
+
+def messageReceived(methods=['GET', 'POST']):
+    print ('message received')
+
+@socketio.on('my event')
+def handle_my_custom_event(json, methods=['GET', 'POST']):
+    print('Received event ' + str(json))
+    socketio.emit('my response', json, callback=messageReceived)
 
 if __name__ == '__main__':
     app.run(debug=True)
+    socketio.run(app, debug=True)
