@@ -1,18 +1,32 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-
+from flask import Flask, redirect, request
+from flask_bootstrap import Bootstrap
+from fboost.models import db
+from fboost import views
 
 def create_app():
+
     app = Flask(__name__)
-    app.config['DEBUG'] = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/brocks/boost/db/boost.db'
-    app.config['SECRET_KEY'] = 'savage12'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config.from_object('config')
 
-    return app
-
-def create_db(app):
-    db = SQLAlchemy(app)
+    #Setup the database
+    from flask_sqlalchemy import SQLAlchemy
+    
     db.init_app(app)
 
-    return db
+    from .views import mainbp
+    app.register_blueprint(views.mainbp)
+
+    from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = '.login'
+
+    from .models import User
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+    
+    Bootstrap(app)
+
+    return app
