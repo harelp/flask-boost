@@ -8,12 +8,12 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 sys.path.append("/Users/brocks/boost/")
-from fboost import create_app
+from fboost import create_app, create_db
+from fboost.boostforms import LoginForm, RegisterForm
 from passlib.hash import sha256_crypt
 
 app = create_app()
-db = SQLAlchemy(app)
-db.init_app(app)
+db = create_db(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -31,16 +31,6 @@ class User(UserMixin, db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-class LoginForm(FlaskForm):
-    username = StringField('username', validators=[InputRequired(), Length(min=4, max=20)])
-    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-    remember = BooleanField('Remember Me')
-
-class RegisterForm(FlaskForm):
-    username = StringField('username', validators=[InputRequired(), Length(min=4, max=20)])
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
-    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -57,15 +47,18 @@ def login():
         app.logger.info(submitted_username)
         user = User.query.filter(func.lower(User.username)==submitted_username).first()
 
-        if user.username.lower() == submitted_username.lower():
-            if sha256_crypt.verify(form.password.data, user.password):
-                login_user(user, remember=form.remember.data)
-                return redirect(url_for('userdashboard'))
+        
+        if user:
+            if user.username.lower() == submitted_username.lower():
+                if sha256_crypt.verify(form.password.data, user.password):
+                    login_user(user, remember=form.remember.data)
+                    return redirect(url_for('userdashboard'))
+                else:
+                     return '<h1> You\'re stupid </h1>'
             else:
-                 return '<h1> You\'re stupid </h1>'
+                return '<h1> Invalid Login </h1>'
         else:
             return '<h1> Invalid Login </h1>'
-
     return render_template('login.html', form=form)
 
 @app.route('/logout')
@@ -83,9 +76,8 @@ def register():
         new_user = User(username=form.username.data, email=form.email.data, password=hash_password)
         db.session.add(new_user)
         db.session.commit()
-        return '<h1> New user has been created </h1>'
-        #return '<h1>' + form.username.data + ' ' + form.email.data + ' ' + form.password.data + '</h1>'
-
+        return redirect(url_for('login'))
+        
     return render_template('register.html', form=form)
 
 @app.route('/userdashboard')
