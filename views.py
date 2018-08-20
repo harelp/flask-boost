@@ -5,11 +5,10 @@ from sqlalchemy import func
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from passlib.hash import sha256_crypt
-from boostforms import LoginForm, RegisterForm
-from .models import User
+from .boostforms import LoginForm, RegisterForm
+from .models import User, db
 
 mainbp = Blueprint('mainbp', __name__, template_folder='templates', static_folder='static')
-
 
 @mainbp.route('/')
 def index():
@@ -25,10 +24,13 @@ def login():
         submitted_username = submitted_username.lower()
 
         user = User.query.filter(func.lower(User.username)==submitted_username).first()
-        
+        print (user.role)
         if user:
             if user.username.lower() == submitted_username.lower():
-                if sha256_crypt.verify(form.password.data, user.password):
+                if sha256_crypt.verify(form.password.data, user.password) and user.role == "admin":
+                    login_user(user, remember=form.remember.data)
+                    return redirect(request.args.get('next') or url_for('.admindashboard'))
+                elif sha256_crypt.verify(form.password.data, user.password) and user.role == "client":
                     login_user(user, remember=form.remember.data)
                     return redirect(request.args.get('next') or url_for('.userdashboard'))
                 else:
@@ -62,6 +64,11 @@ def register():
 @login_required
 def userdashboard():
     return render_template('userdashboard.html', name=current_user.username)
+
+@mainbp.route('/admindashboard')
+@login_required
+def admindashboard():
+    return render_template('admindashboard.html', name=current_user.username)
 
 @mainbp.route('/chat')
 @login_required

@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
+from flask_admin import Admin
 
 db = SQLAlchemy()
 
@@ -8,3 +9,4 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(20), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
+    role = db.Column(db.String(80))
