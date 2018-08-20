@@ -20,4 +20,9 @@ class User(UserMixin, db.Model):
     message = db.Column(db.String(100))
     user_id = db.Column(db.String(20))
     created_date = db.Column(DateTime(timezone=True))
-'''  
+'''
+
+class Orders(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    order_type = db.Column(db.String(30), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

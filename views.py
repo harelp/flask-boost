@@ -3,9 +3,9 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from flask_sqlalchemy import SQLAlchemy, functools
 from sqlalchemy import func
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField
+#from wtforms import StringField, PasswordField, BooleanField
 from passlib.hash import sha256_crypt
-from .boostforms import LoginForm, RegisterForm
+from .boostforms import LoginForm, RegisterForm, SoloOrderForm
 from .models import User, db, socketio
 
 mainbp = Blueprint('mainbp', __name__, template_folder='templates', static_folder='static')
@@ -64,6 +64,12 @@ def register():
 @login_required
 def userdashboard():
     return render_template('userdashboard.html', name=current_user.username)
+
+
+@mainbp.route('/order')
+def order():
+    form = SoloOrderForm()
+    return render_template('order.html', form=form)
 
 @mainbp.route('/admindashboard')
 @login_required
