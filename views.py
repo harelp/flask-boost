@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField
 from passlib.hash import sha256_crypt
 from .boostforms import LoginForm, RegisterForm
-from .models import User, db
+from .models import User, db, socketio
 
 mainbp = Blueprint('mainbp', __name__, template_folder='templates', static_folder='static')
 
@@ -74,3 +74,19 @@ def admindashboard():
 @login_required
 def usertobooster_chat():
     return render_template('usertobooster.html', name=current_user.username)
+
+@socketio.on('message')
+@login_required
+def received_message(message):
+    print (current_user.username + " Connected To Chat.")
+    socketio.send('This is from flask')
+
+def message_received(methods=['GET', 'POST']):
+    print ('message received')
+    
+
+@socketio.on('client_msg')
+def handle_client_msg(json, methods=['GET', 'POST']):
+    print (str(json))
+    socketio.emit('display_to_chat', json, callback=message_received)
+    #SQL LATER

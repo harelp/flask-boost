@@ -1,11 +1,12 @@
 from flask import Flask, redirect, request
 from flask_bootstrap import Bootstrap
-from fboost.models import db
+from fboost.models import db, socketio
 from fboost import views
 from flask_admin import Admin
 from flask_admin.contrib import sqla
 from flask_admin.contrib.sqla import ModelView
 from passlib.hash import sha256_crypt
+from flask_socketio import SocketIO, send, emit
 
 def create_app():
 
@@ -40,6 +41,10 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
+
+    #Setup Chat SocketIO
+    socketio.init_app(app)
+
     #Setup Flask-Admin
 
     admin = Admin(app, name='fboost-admin')
@@ -56,12 +61,10 @@ def create_app():
             model.password = sha256_crypt.hash(model.password)
 
         def is_accessible(self):
-            print (current_user.role)
             return current_user.role == "admin"
 
         def inaccessible_callback(self, name, **kwargs):
             return '<h1> You are not logged in!</h1>'
-
 
     admin.add_view(UserView(User, db.session))
     return app

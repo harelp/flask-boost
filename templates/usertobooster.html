@@ -1,12 +1,20 @@
-<html>
-<head>
-    <title>Usertobooster</title>
-</head>
-<body>
+{% extends "bootstrap/base.html" %}
+{% block title %}
+User to Booster Chat
+{% endblock %}
+
+{% block styles %}
+
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+{% endblock %}
+
+{% block content %}
     <h3 style='color: #ccc;font-size: 30px;'>No message yet..</h3>
     <div class="message_holder"></div>
     <form action="" method="POST">
-          <input type="text" class="username" placeholder="User Name"/>
+          <input type="hidden" id="username" name="username" value="{{ name }}"/>
+          <h2>{{name}}</h2>
           <input type="text" class="message" placeholder="Messages"/>
           <input type="submit"/>
      </form>
@@ -14,31 +22,30 @@
      
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
+
     <script type="text/javascript">
         var socket = io.connect('http://127.0.0.1:5000');
-        socket.on( 'connect', function() {
-        socket.emit( 'my event', {
-          data: 'User Connected'
-        } )
-        var form = $( 'form' ).on( 'submit', function( e ) {
-          e.preventDefault()
-          let user_name = $( 'input.username' ).val()
-          let user_input = $( 'input.message' ).val()
-          socket.emit( 'my event', {
-            user_name : user_name,
-            message : user_input
-          } )
-          $( 'input.message' ).val( '' ).focus()
-        } )
-      } )
-      socket.on( 'my response', function( msg ) {
-        console.log( msg )
-        if( typeof msg.user_name !== 'undefined' ) {
-          $( 'h3' ).remove()
-          $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+'</b> '+msg.message+'</div>' )
-        }
-      })
+            socket.on('connect', function() {
+            socket.send('User Connected To Chat');  
+           
+        });
+
+        var form = $('form').on('submit', function(e){
+            e.preventDefault()
+            let user_name = document.getElementById('username').value;
+            let user_msg = $('input.message').val();
+           
+            socket.emit('client_msg', {
+                user_name : user_name,
+                message : user_msg
+            });
+            $('input.message').val('').focus()
+        });
+
+        socket.on('display_to_chat', function(msg){
+            $( 'div.message_holder' ).append( '<div><b style="color: #000">'+msg.user_name+'</b> '+msg.message+'</div>' )
+            });
+        
     </script>
-</body>
-</html>
+{% endblock %}
