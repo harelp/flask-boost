@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<head>
+{% block head %}
+ <title>{% block title %}{% endblock %}QuickBoosters</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {%block styles %}
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,600,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/phone.css">
+    {% endblock %}
+ {% endblock %}
+</head>
+    <body>
+        {%include 'includes/_navbar.html' %}
+        {% block content %}{% endblock %}
+
+        {% include 'includes/_footer.html'  %}
+    
+    </body>
+    </html>

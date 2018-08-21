@@ -1,0 +1,29 @@
+<!-- Sidenav code -->
+<div id="mySidenav" class="sidenav upper">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"><i class="fas fa-times"></i></a>
+         <div class="logohide"><img src="../static/img/logo1.png" alt="Logo"></div>    
+          <a href="#">page 1</a>      
+                     <a href="#">page 2</a>
+                     <a href="#">page 3</a>
+                     <a class="btn-client" href="#"><i class="fas fa-lock"></i>client login</a>
+        </div>
+    <!-- Sidenav code end -->
+    <div class="container">
+              <div class="logo">
+               <img src="../static/img/logo1.png" alt="Logo">
+            </div>
+    <!-- Sidenav code --><div class="hide">
+                     <span onclick="openNav()">
+                      <i class="fas fa-bars"></i>
+                     </span>
+                 </div> <!-- Sidenav code end -->
+    
+            <nav class="navbar margin-auto">
+                 <ul class="menu upper">
+                     <li><a href="{{ url_for('.order') }}">Order</a></li>
+                     <li><a href="#">Page 2</a></li>
+                     <li><a href="#">Page 3</a></li>
+                     <li><a class="btn-client" href="{{ url_for('.login') }}"><i class="fas fa-lock"></i>client login</a></li>
+                  </ul>
+            </nav>
+        </div>

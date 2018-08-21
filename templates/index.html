@@ -1,43 +1,218 @@
-{% extends "bootstrap/base.html" %}
+         <!DOCTYPE html>
+        <html>
+        <head>
+         <title>QuickBoosters</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link href="https://fonts.googleapis.com/css?family=Montserrat:400,400i,600,700" rel="stylesheet">
+            <link href="https://fonts.googleapis.com/css?family=Ubuntu:400,700" rel="stylesheet">
+            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+            <link rel="stylesheet" type="text/css" href="../static/style.css">
+            <link rel="stylesheet" type="text/css" href="../static/phone.css">
+         
+        </head>
+        <body>
+        <!-- Sidenav code -->
+            <div id="mySidenav" class="sidenav upper">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"><i class="fas fa-times"></i></a>
+             <div class="logohide"><img src="../static/img/logo1.png" alt="Logo"></div>    
+              <a href="#">page 1</a>      
+                         <a href="#">page 2</a>
+                         <a href="#">page 3</a>
+                         <a class="btn-client" href="#"><i class="fas fa-lock"></i>client login</a>
+            </div>
+        <!-- Sidenav code end -->
+        <div class="container">
+                  <div class="logo">
+                   <img src="../static/img/logo1.png" alt="Logo">
+                </div>
+<!-- Sidenav code --><div class="hide">
+                         <span onclick="openNav()">
+                          <i class="fas fa-bars"></i>
+                         </span>
+                     </div> <!-- Sidenav code end -->
 
-{% block title %}
-Quick Boosters
-{% endblock %}
+                <nav class="navbar margin-auto">
+                     <ul class="menu upper">
+                         <li><a href="{{ url_for('.order') }}">Order</a></li>
+                         <li><a href="#">Page 2</a></li>
+                         <li><a href="#">Page 3</a></li>
+                         <li><a class="btn-client" href="{{ url_for('.login') }}"><i class="fas fa-lock"></i>client login</a></li>
+                      </ul>
+                </nav>
+            </div>
+            <div id="particles-js">
+                <div class="hero-content">
+                    <div class="hero-1">
+                          <img class="front-logo" src="../static/img/rocket.png" alt="rocket">
+                    <p class="title">The safest LoL boost experience</p>
+                    <p class="subtitle">Safe and reliable elo boosting and coaching services</p>
+                            <div class="buttons">
+                                 <a href="#" class="btn orange">Check Our Prices Now</a>
+                            </div>
+                    </div>
+                </div>
 
-{% block styles %}
-{{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='starter-template.css')}}">
-{% endblock %}
+            </div>
+            <!-- <div class="hero">
+                
+             </div> -->
+<div class="wrapper">
+    <div class="ftr-title"><h2>Why our Elo boost is different and how we keep your account safe</h2>
+    <p>We're an experienced boosting organisation with over 400 orders completed and without a single ban for account sharing. We pick each booster with great care to guarantee a professional service.</p></div>
+    
+<div class="features">
+    <div class="feature-left box hvr-underline hvr-fade">
+       <i class="fas fa-chart-area"></i>
+        <h3>Lorem ipsum dolor</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+    <div class="feature-middle box hvr-underline hvr-fade">
+        <i class="fas fa-gem"></i>
+        <h3>Lorem ipsum dolor</h3>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.</p>
 
-{% block content %}
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Quick Boosters</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="{{ url_for('.order') }}">Order</a></li>
-            <li><a href="{{ url_for('.login') }}">Login</a></li>
-            <li><a href="{{ url_for('.register') }}">Sign Up</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+    </div> 
+    <div class="feature-right box hvr-underline hvr-fade">
+         <i class="fas fa-dollar-sign"></i>
+        <h3>Lorem ipsum dolor</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+    <div class="feature-left-two box hvr-underline hvr-fade">
+       <i class="fas fa-shield-alt"></i>
+        <h3>Lorem ipsum dolor</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+    <div class="feature-middle-two box hvr-underline hvr-fade">
+       <i class="fas fa-life-ring"></i>
+        <h3>Lorem ipsum dolor</h3>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.</p>
 
-    <div class="container">
+    </div> 
+    <div class="feature-right-two box hvr-underline hvr-fade">
+        <i class="fas fa-cog"></i>
+        <h3>Lorem ipsum dolor</h3>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+</div>
+</div>
 
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
-      </div>
+<div class="wrapper odd">
 
-    </div><!-- /.container -->
-{% endblock %}
+    <div class="ftr-title"><h2>Easy to Follow Steps!</h2>
+    </div>
+
+<div class="plans">
+<div class="plans-one box-plan box-plan-hl">
+                       <div class="card">
+                        <span class="tag"><i class="fas fa-arrow-circle-right"></i></span>
+                        <h4><strong>Choose your service</strong></h4>
+                        <p>Pick the boost service that you desire. We have multiple options that will allow you reach your goal!</p>
+                    </div>
+                        
+                        
+                    </div>
+<div class="plans-two box-plan box-plan-hl"> <div class="card">
+                        <span class="tag"><i class="fas fa-arrow-circle-right"></i></span>
+                        <h4><strong>Select your payment method</strong></h4>
+                        <p>We support multiple types of payment methods such as PayPal, Credit Card, Bitcoins and a lot more!</p>
+                    </div>
+                </div>
+<div class="plans-three box-plan box-plan-hl"> <div class="card">
+                        <h4><strong>Follow your order</strong></h4>
+                        <p>After placing your order successfully you will be instantly redirected to your order in the members area.</p>
+                    </div>
+                </div>
+</div>
+
+
+
+
+</div>
+<div class="wrapper">
+      <div class="ftr-title"><h2>Frequently Asked Questions</h2></div>
+
+<div class="faq-content">
+  <div class="faq-question">
+    <input id="q1" type="checkbox" class="panel">
+    <div class="plus">+</div>
+    <label for="q1" class="panel-title">How does this service work?</label>
+    <div class="panel-content">After completing your order,we will assign a Master or Challenger booster to handle your order and he will make sure you’re completely satisfied with us.</div>
+  </div>
+  
+  <div class="faq-question">
+    <input id="q2" type="checkbox" class="panel">
+    <div class="plus">+</div>
+    <label for="q2" class="panel-title">What makes us different?</label>
+    <div class="panel-content">Unlike other services, we have ONLY CHALLENGER AND MASTER BOOSTERS who have been boosting for more than a year! We do not recruit or allow unreliable players on your account! Our starting and finishing times are unmatched by any service. We aim towards quality in all areas, which will always be guaranteed to you!</div>
+  </div>
+  
+  <div class="faq-question">
+    <input id="q3" type="checkbox" class="panel">
+    <div class="plus">+</div>
+    <label for="q3" class="panel-title">How can i be sure my account will not be stolen?</label>
+    <div class="panel-content">It is not possible to steal accounts since every account has a specific email associated to it, that only the owner has access to, so your account is always recoverable. Regardless, we also take extreme care to ensure that your information is kept secure.</div>
+  </div>
+</div>    
+</div>
+
+<footer class="black">
+    <div class="foot-contain">
+        <div class="link-one">
+        <h4>Solo Boost</h4>
+       <ul>
+                  <li><a href="">Solo Division</a></li>
+                  <li><a href="">Solo Placements</a></li>
+                  <li><a href="">Solo Net Wins</a></li>
+                </ul>
+    </div>
+    <div class="link-two">
+         <h4>Duo Boost</h4>
+        <ul>
+                  <li><a href="">Duo Division</a></li>
+                  <li><a href="">Duo Placements</a></li>
+                  <li><a href="">Duo Net Wins</a></li>
+                  <li><a href="">Demo</a></li>
+                </ul>
+    </div>
+     <div class="link-three">
+         <h4>Contact</h4>
+        <ul>
+            <li><a href="">Contact Us</a></li>
+            <li><a href="">Live Chat</a></li>
+            <li><a href="">Members Area</a></li>
+            <li><a href="">Knowledgebase</a></li>
+        </ul>
+    </div>
+   <div class="link-four">
+         <h4>Connect with Us</h4>
+        <ul>
+                    <li class="hvr-bob"><a href="https://facebook.com"><img src="../static/img/fb.png" alt=facebook">
+</a></li>
+            <li class="hvr-bob"><a href="https://twitter.com"><img src="../static/img/tw.png" alt="twitter">
+</a></li>
+           <li class="hvr-bob"><a href="https://instagram.com"><img src="../static/img/insta.png" alt="instagram">
+</a></li>
+</ul>
+        <h5>©2018 Company Name. All Right Reserved</h5>   
+    </div>
+
+    </div>
+    
+</footer>
+
+
+
+          <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+          <script src="../js/toggler.js"></script>
+          <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+           <script src="../js/part.js"></script>
+        </body>
+        </html>
+
+

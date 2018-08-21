@@ -120,6 +120,10 @@ text-decoration : none;
 color : #fff;
 }
 
+.btn-default {
+  color : black;
+}
+
 .btn-client i{
  padding-right: 0.8rem;
 }
@@ -781,8 +785,8 @@ margin-bottom : 0.5em 0;
 
 /* Style page content */
 .main-sticky {
-  position:relative
-    margin-left: 160px; /* Same as the width of the sidebar */
+  position:relative;
+  margin-left: 160px;
 }
 
 .fnt {
@@ -894,7 +898,7 @@ margin-bottom : 0.5em 0;
   .tabs a {
     background-color: #f5b9a6;
     border-bottom: 1px solid #fff;
-    color: #5a5a5a;
+    /*color: #5a5a5a;*/
     font-weight: 500;
     display: block;
     letter-spacing: 0;
@@ -904,7 +908,7 @@ margin-bottom : 0.5em 0;
     -webkit-transition: all 0.2s ease-in-out;
     -moz-transition: all 0.2s ease-in-out;
     transition: all 0.2s ease-in-out;
-    border-bottom: 2px solid $color;
+    /*border-bottom: 2px solid $color;*/
   }
 
 .tabs_item {
@@ -1114,8 +1118,6 @@ padding : 15px;
 background-color : rgba(255, 255, 255, 0.2);
 color : #000;
 border:1px solid #ddd;
-}
-th {
 }
 
 /*Chart*/

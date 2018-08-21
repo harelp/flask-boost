@@ -38,3 +38,11 @@ body {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
   }
+  .btn-test {
+    border-radius: 5px;
+    border: 0;
+    padding: 10px 20px;
+    font-size: 15px;
+    text-decoration: none;
+    color: #000;
+}
