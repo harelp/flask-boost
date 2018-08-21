@@ -2,11 +2,10 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SelectField
 from wtforms.validators import InputRequired, Email, Length
 
-leagues = [('Bronze 5', 'Bronze 5'), ('Bronze 4', 'Bronze 4'), ('Bronze 3','Bronze 3')]
+leagues = [('Bronze', 'Bronze'), ('Silver', 'Silver'), ('Gold','Gold'), ('Platinum', 'Platinum'), ('Diamond', 'Diamond')]
 
-#Need a list of tuples
-
-
+divisions = [('5', '5'), ('4', '4'), ('3', '3'), ('2', '2'), ('1','1')]
+lp_choices = [('0-20', '0-20'), ('21-40', '21-40'), ('41-60', '41-60'), ('61-80', '61-80'), ('81-99', '81-99')]
 class LoginForm(FlaskForm):
     username = StringField('Username:', validators=[InputRequired(), Length(min=4, max=20)],render_kw={"placeholder": "Username"})
     password = PasswordField('Password:', validators=[InputRequired(), Length(min=8, max=80)],render_kw={"placeholder": "Password"})
@@ -19,4 +18,6 @@ class RegisterForm(FlaskForm):
 
 
 class SoloOrderForm(FlaskForm):
-    current_rank = SelectField(label='Current Rank', choices=leagues)
+    current_league = SelectField(label='Current League', choices=leagues)
+    current_division = SelectField(label='Current Division', choices=divisions)
+    current_lp = SelectField(label="Current lp", choices=lp_choices)

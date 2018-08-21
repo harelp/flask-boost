@@ -1,47 +1,14 @@
-{% extends "bootstrap/base.html" %}
+{% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block title %}
-Quick Boosters - Order
-{% endblock %}
-
-{% block styles %}
-{{super()}}
-<link rel="stylesheet" href="{{url_for('.static', filename='starter-template.css')}}">
+		Order
 {% endblock %}
 
 {% block content %}
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Quick Boosters</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="{{ url_for('.index') }}">Home</a></li>
-            <li class="active"><a href="{{ url_for('.index') }}">Order</a></li>
-            <li><a href="{{ url_for('.login') }}">Login</a></li>
-            <li><a href="{{ url_for('.register') }}">Sign Up</a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
-
-    <div class="container">
-
-      <div class="starter-template">
-        <h1>Bootstrap starter template</h1>
-        <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+<p>Order Form</p>
         <form>
-                {{ wtf.form_field(form.current_rank) }}
+              {{ form.current_league }}
+              {{ form.current_division }}
+              {{ form.current_lp }}
         </form>
-
-      </div>
-
-    </div><!-- /.container -->
 {% endblock %}

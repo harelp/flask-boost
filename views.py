@@ -97,7 +97,7 @@ def userdashboard():
     return render_template('userdashboard.html', name=current_user.username)
 
 
-@mainbp.route('/order')
+@mainbp.route('/order', methods=['GET', 'POST'])
 def order():
     form = SoloOrderForm()
     return render_template('order.html', form=form)
