@@ -41,6 +41,37 @@ def login():
             return '<h1> Invalid Login </h1>'
     return render_template('login.html', form=form)
 
+
+@mainbp.route('/login2', methods=["GET", "POST"])
+def login2():
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        submitted_username = form.username.data
+        submitted_username = str(submitted_username)
+        submitted_username = submitted_username.lower()
+
+        user = User.query.filter(func.lower(User.username)==submitted_username).first()
+        print (user.role)
+        if user:
+            if user.username.lower() == submitted_username.lower():
+                if sha256_crypt.verify(form.password.data, user.password) and user.role == "admin":
+                    login_user(user, remember=form.remember.data)
+                    return redirect(request.args.get('next') or url_for('.admindashboard'))
+                elif sha256_crypt.verify(form.password.data, user.password) and user.role == "client":
+                    login_user(user, remember=form.remember.data)
+                    return redirect(request.args.get('next') or url_for('.userdashboard'))
+                else:
+                     return '<h1> You\'re stupid </h1>'
+            else:
+                return '<h1> Invalid Login </h1>'
+        else:
+            return '<h1> Invalid Login </h1>'
+
+
+    return render_template('login2.html', form=form)
+
+
 @mainbp.route('/logout')
 @login_required
 def logout():

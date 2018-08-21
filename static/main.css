@@ -6,7 +6,7 @@
 [ FONT ]*/
 
 @font-face {
-  font-family: Ubuntu-Regular;
+  font-family: 'Montserrat', sans-serif;
   src: url('../fonts/ubuntu/Ubuntu-Regular.ttf'); 
 }
 
@@ -31,7 +31,7 @@ body, html {
 
 /*---------------------------------------------*/
 a {
-	font-family: Ubuntu-Regular;
+	font-family: 'Montserrat', sans-serif;
 	font-size: 14px;
 	line-height: 1.7;
 	color: #666666;

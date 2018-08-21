@@ -8,8 +8,8 @@ leagues = [('Bronze 5', 'Bronze 5'), ('Bronze 4', 'Bronze 4'), ('Bronze 3','Bron
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Username:', validators=[InputRequired(), Length(min=4, max=20)])
-    password = PasswordField('Password:', validators=[InputRequired(), Length(min=8, max=80)])
+    username = StringField('Username:', validators=[InputRequired(), Length(min=4, max=20)],render_kw={"placeholder": "Username"})
+    password = PasswordField('Password:', validators=[InputRequired(), Length(min=8, max=80)],render_kw={"placeholder": "Password"})
     remember = BooleanField('Remember Me')
 
 class RegisterForm(FlaskForm):
