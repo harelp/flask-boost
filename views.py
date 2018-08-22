@@ -6,7 +6,8 @@ from flask_wtf import FlaskForm
 #from wtforms import StringField, PasswordField, BooleanField
 from passlib.hash import sha256_crypt
 from .boostforms import LoginForm, RegisterForm, SoloOrderForm
-from .models import User, db, socketio
+from .models import User, db, socketio, ChatLog
+import datetime
 
 mainbp = Blueprint('mainbp', __name__, template_folder='templates', static_folder='static')
 
@@ -17,20 +18,19 @@ def index():
 @mainbp.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
-
     if form.validate_on_submit():
         submitted_username = form.username.data
         submitted_username = str(submitted_username)
         submitted_username = submitted_username.lower()
 
         user = User.query.filter(func.lower(User.username)==submitted_username).first()
-        print (user.role)
+        print (user)
         if user:
             if user.username.lower() == submitted_username.lower():
-                if sha256_crypt.verify(form.password.data, user.password) and user.role == "admin":
+                if sha256_crypt.verify(form.password.data, user.password) and user.role == "Admin":
                     login_user(user, remember=form.remember.data)
                     return redirect(request.args.get('next') or url_for('.admindashboard'))
-                elif sha256_crypt.verify(form.password.data, user.password) and user.role == "client":
+                elif sha256_crypt.verify(form.password.data, user.password) and user.role == "Client":
                     login_user(user, remember=form.remember.data)
                     return redirect(request.args.get('next') or url_for('.userdashboard'))
                 else:
@@ -52,15 +52,14 @@ def login2():
         submitted_username = submitted_username.lower()
 
         user = User.query.filter(func.lower(User.username)==submitted_username).first()
-        print (user.role)
+        print (user.username)
         if user:
-            if user.username.lower() == submitted_username.lower():
-                if sha256_crypt.verify(form.password.data, user.password) and user.role == "admin":
-                    login_user(user, remember=form.remember.data)
+            print (user.password)
+            print (form.password.data)
+            if booster.username.lower() == submitted_username.lower():
+                if form.password.data == user.password:
+                    login_user(booster, remember=form.remember.data)
                     return redirect(request.args.get('next') or url_for('.admindashboard'))
-                elif sha256_crypt.verify(form.password.data, user.password) and user.role == "client":
-                    login_user(user, remember=form.remember.data)
-                    return redirect(request.args.get('next') or url_for('.userdashboard'))
                 else:
                      return '<h1> You\'re stupid </h1>'
             else:
@@ -68,8 +67,7 @@ def login2():
         else:
             return '<h1> Invalid Login </h1>'
 
-
-    return render_template('login2.html', form=form)
+    return render_template('login2.html', form=form, booster=booster.username)
 
 
 @mainbp.route('/logout')
@@ -127,3 +125,10 @@ def handle_client_msg(json, methods=['GET', 'POST']):
     print (str(json))
     socketio.emit('display_to_chat', json, callback=message_received)
     #SQL LATER
+    username = json['user_name']
+   
+    msg = ChatLog(json['message'], current_user.username, datetime.datetime.now())
+    
+    db.session.add(msg)
+    db.session.commit()
+    
