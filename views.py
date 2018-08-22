@@ -6,10 +6,12 @@ from flask_wtf import FlaskForm
 #from wtforms import StringField, PasswordField, BooleanField
 from passlib.hash import sha256_crypt
 from .boostforms import LoginForm, RegisterForm, SoloOrderForm
-from .models import User, db, socketio, ChatLog
+from .models import User, db, socketio, ChatLog, Orders, join_room
 import datetime
 
 mainbp = Blueprint('mainbp', __name__, template_folder='templates', static_folder='static')
+
+users = {}
 
 @mainbp.route('/')
 def index():
@@ -31,6 +33,9 @@ def login():
                     login_user(user, remember=form.remember.data)
                     return redirect(request.args.get('next') or url_for('.admindashboard'))
                 elif sha256_crypt.verify(form.password.data, user.password) and user.role == "Client":
+                    login_user(user, remember=form.remember.data)
+                    return redirect(request.args.get('next') or url_for('.userdashboard'))
+                elif sha256_crypt.verify(form.password.data, user.password) and user.role == "Booster":
                     login_user(user, remember=form.remember.data)
                     return redirect(request.args.get('next') or url_for('.userdashboard'))
                 else:
@@ -114,21 +119,30 @@ def usertobooster_chat():
 @login_required
 def received_message(message):
     print (current_user.username + " Connected To Chat.")
-    socketio.send('This is from flask')
-
+    users[current_user.username] = request.sid
 def message_received(methods=['GET', 'POST']):
     print ('message received')
-    
+
 
 @socketio.on('client_msg')
+@login_required
 def handle_client_msg(json, methods=['GET', 'POST']):
     print (str(json))
-    socketio.emit('display_to_chat', json, callback=message_received)
-    #SQL LATER
+    print (request.sid)
     username = json['user_name']
    
     msg = ChatLog(json['message'], current_user.username, datetime.datetime.now())
     
+    send_to = Orders.query.filter(Orders.booster_assigned=="booster").first()
+    roomtosend = users[send_to.booster_assigned]
+    print (roomtosend)
+    print (request.sid)
+    print (send_to.booster_assigned)
+    #Need Logic to put booster and Client in room
+    join_room("room1")
+    socketio.emit('display_to_chat', json, room="room1", callback=message_received)
     db.session.add(msg)
     db.session.commit()
     
+def handle_join_room(room):
+    join_room(room)
