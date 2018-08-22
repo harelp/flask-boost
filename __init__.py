@@ -35,12 +35,14 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = '.login'
 
-    from .models import User
+    from .models import User, Booster
 
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
-
+    
+    def load_booster(booster_id):
+        return Booster.query.get(int(booster_id))
 
     #Setup Chat SocketIO
     socketio.init_app(app)

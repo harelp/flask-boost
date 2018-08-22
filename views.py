@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 #from wtforms import StringField, PasswordField, BooleanField
 from passlib.hash import sha256_crypt
 from .boostforms import LoginForm, RegisterForm, SoloOrderForm
-from .models import User, db, socketio, ChatLog, Orders, join_room
+from .models import User, db, socketio, ChatLog, Orders, join_room, Booster
 import datetime
 
 mainbp = Blueprint('mainbp', __name__, template_folder='templates', static_folder='static')
@@ -35,9 +35,6 @@ def login():
                 elif sha256_crypt.verify(form.password.data, user.password) and user.role == "Client":
                     login_user(user, remember=form.remember.data)
                     return redirect(request.args.get('next') or url_for('.userdashboard'))
-                elif sha256_crypt.verify(form.password.data, user.password) and user.role == "Booster":
-                    login_user(user, remember=form.remember.data)
-                    return redirect(request.args.get('next') or url_for('.userdashboard'))
                 else:
                      return '<h1> You\'re stupid </h1>'
             else:
@@ -47,8 +44,8 @@ def login():
     return render_template('login.html', form=form)
 
 
-@mainbp.route('/login2', methods=["GET", "POST"])
-def login2():
+@mainbp.route('/boosterlogin', methods=["GET", "POST"])
+def boosterlogin():
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -56,23 +53,23 @@ def login2():
         submitted_username = str(submitted_username)
         submitted_username = submitted_username.lower()
 
-        user = User.query.filter(func.lower(User.username)==submitted_username).first()
-        print (user.username)
-        if user:
-            print (user.password)
+        booster = Booster.query.filter(func.lower(Booster.booster_name)==submitted_username).first()
+        print (booster.booster_name)
+        if booster:
+            print (booster.password)
             print (form.password.data)
-            if booster.username.lower() == submitted_username.lower():
-                if form.password.data == user.password:
+            if booster.booster_name.lower() == submitted_username.lower():
+                if sha256_crypt.verify(form.password.data, booster.password):
                     login_user(booster, remember=form.remember.data)
-                    return redirect(request.args.get('next') or url_for('.admindashboard'))
+                    return redirect(request.args.get('next') or url_for('.index'))
                 else:
-                     return '<h1> You\'re stupid </h1>'
+                     return '<h1> Wrong Password </h1>'
             else:
                 return '<h1> Invalid Login </h1>'
         else:
             return '<h1> Invalid Login </h1>'
 
-    return render_template('login2.html', form=form, booster=booster.username)
+    return render_template('boosterlogin.html', form=form)
 
 
 @mainbp.route('/logout')
@@ -93,6 +90,24 @@ def register():
         return redirect(url_for('.login'))
 
     return render_template('register.html', form=form)
+
+@mainbp.route('/booster_register', methods=['GET', 'POST'])
+def booster_register():
+    form = RegisterForm()
+
+    if form.validate_on_submit():
+        booster_name = form.username.data
+        hash_password = sha256_crypt.hash(form.password.data)
+        email = form.email.data
+        join_date = datetime.datetime.now()
+
+        print ("booster_name: " + booster_name + " password: " + hash_password + " email: " + email)
+        new_booster = Booster(booster_name=booster_name, email=email, password=hash_password, join_date=datetime.datetime.now())
+        db.session.add(new_booster)
+        db.session.commit()
+        return redirect(url_for('.boosterlogin'))
+
+    return render_template('booster_register.html', form=form)
 
 @mainbp.route('/userdashboard')
 @login_required
@@ -131,15 +146,16 @@ def handle_client_msg(json, methods=['GET', 'POST']):
     print (request.sid)
     username = json['user_name']
    
-    msg = ChatLog(json['message'], current_user.username, datetime.datetime.now())
     
     send_to = Orders.query.filter(Orders.booster_assigned=="booster").first()
+
     roomtosend = users[send_to.booster_assigned]
     print (roomtosend)
     print (request.sid)
     print (send_to.booster_assigned)
     #Need Logic to put booster and Client in room
-    join_room("room1")
+    msg = ChatLog(json['message'], current_user.username, datetime.datetime.now(), room=roomtosend)
+
     socketio.emit('display_to_chat', json, room="room1", callback=message_received)
     db.session.add(msg)
     db.session.commit()

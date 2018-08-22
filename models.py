@@ -28,6 +28,21 @@ class ChatLog(db.Model):
         self.userfrom = userfrom
         self.created_date = created_date
         self.room = room
+
+class Booster(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    booster_name = db.Column(db.String(20), nullable=False)
+    password = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    join_date = db.Column(db.DateTime(timezone=True))
+    current_order = db.Column(db.Integer, db.ForeignKey('orders.id'))
+    current_balance = db.Column(db.Float)
+
+    def __init__(self, booster_name, email, password, join_date):
+        self.booster_name = booster_name
+        self.password = password
+        self.email = email
+        self.join_date = join_date
         
 
 class Orders(db.Model):
@@ -35,9 +50,9 @@ class Orders(db.Model):
     order_type = db.Column(db.String(30), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     order_amount = db.Column(db.Float, nullable=False)
-    booster_assigned = db.Column(db.String(20), db.ForeignKey('users.username'))
+    booster_assigned = db.Column(db.String(20), db.ForeignKey('booster.booster_name'))
 
-    def __init__(order_type, user_id, order_amount, booster_assigned="booster"):
+    def __init__(order_type, user_id, order_amount, booster_assigned="None"):
         self.message = message
         self.userfrom = userfrom
         self.created_date = created_date
