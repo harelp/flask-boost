@@ -6,7 +6,7 @@ from flask_wtf import FlaskForm
 #from wtforms import StringField, PasswordField, BooleanField
 from passlib.hash import sha256_crypt
 from .boostforms import LoginForm, RegisterForm, SoloOrderForm
-from .models import User, db, socketio, ChatLog, Orders, join_room, Booster
+from .models import User, db, socketio, ChatLog, Orders, join_room, ChatRoom
 import datetime
 
 mainbp = Blueprint('mainbp', __name__, template_folder='templates', static_folder='static')
@@ -33,6 +33,9 @@ def login():
                     login_user(user, remember=form.remember.data)
                     return redirect(request.args.get('next') or url_for('.admindashboard'))
                 elif sha256_crypt.verify(form.password.data, user.password) and user.role == "Client":
+                    login_user(user, remember=form.remember.data)
+                    return redirect(request.args.get('next') or url_for('.userdashboard'))
+                elif sha256_crypt.verify(form.password.data, user.password) and user.role == "None":
                     login_user(user, remember=form.remember.data)
                     return redirect(request.args.get('next') or url_for('.userdashboard'))
                 else:
@@ -143,22 +146,54 @@ def message_received(methods=['GET', 'POST']):
 @login_required
 def handle_client_msg(json, methods=['GET', 'POST']):
     print (str(json))
-    print (request.sid)
     username = json['user_name']
-   
     
-    send_to = Orders.query.filter(Orders.booster_assigned=="booster").first()
-
-    roomtosend = users[send_to.booster_assigned]
-    print (roomtosend)
-    print (request.sid)
-    print (send_to.booster_assigned)
     #Need Logic to put booster and Client in room
-    msg = ChatLog(json['message'], current_user.username, datetime.datetime.now(), room=roomtosend)
+    msg = ChatLog(json['message'], current_user.username, datetime.datetime.now(), room=request.sid)
 
-    socketio.emit('display_to_chat', json, room="room1", callback=message_received)
+    user = User.query.filter(User.username == username).first()
+    print (user.role)
+    print (current_user.username)
+    if current_user.username == user.username and user.role == "Client":
+        booster = match_user_with_booster(user)
+
+        roomname = str(current_user.username) + str(booster)
+        cr = ChatRoom(roomname=roomname)
+        db.session.add(cr)
+        db.session.commit()
+        join_room(roomname)
+        socketio.emit('display_to_chat', json, room=roomname, callback=message_received)
+    elif user.role == "None":
+        user = match_booster_with_user(user)
+        print ("User to booster"+ user)
+        roomname = str(user) + str(current_user.username)
+        roomtojoin = ChatRoom.query.filter(ChatRoom.roomname==roomname).first()
+        print (roomtojoin)
+        cr = ChatRoom(roomname=roomtojoin.roomname)
+
+        print (roomtojoin.roomname)
+        join_room(roomtojoin.roomname)
+        socketio.emit('display_to_chat', json, room=roomname, callback=message_received)
+    else:
+        print (current_user.username)
+        join_room(request.sid)
     db.session.add(msg)
     db.session.commit()
     
 def handle_join_room(room):
     join_room(room)
+
+def match_user_with_booster(user):
+    print ("User sent MSG")
+    order = Orders.query.filter(Orders.user_id==user.id).first()
+    print ("order: " + order.booster_assigned)
+    print ("SEnding to " + order.booster_assigned)
+    return order.booster_assigned
+
+def match_booster_with_user(booster):
+    print ("Booster Sent MSG")
+    order = Orders.query.filter(Orders.booster_assigned==booster.username).first()
+    customer = User.query.filter(User.id==order.user_id).first()
+    print ("Sending to " + customer.username)
+
+    return customer.username

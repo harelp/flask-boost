@@ -35,7 +35,7 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = '.login'
 
-    from .models import User, Booster
+    from .models import User
 
     @login_manager.user_loader
     def load_user(user_id):
