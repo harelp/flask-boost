@@ -16,8 +16,11 @@ class RegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid Email'), Length(max=50)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
 
-
 class SoloOrderForm(FlaskForm):
     current_league = SelectField(label='Current League', choices=leagues)
     current_division = SelectField(label='Current Division', choices=divisions)
     current_lp = SelectField(label="Current lp", choices=lp_choices)
+
+    desired_league = SelectField(label='Desired League', choices=leagues)
+    desired_division = SelectField(label='Desired Division', choices=divisions)
+    desired_lp = SelectField(label='Desired LP', choices=lp_choices)

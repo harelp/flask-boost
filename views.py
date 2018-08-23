@@ -7,6 +7,7 @@ from flask_wtf import FlaskForm
 from passlib.hash import sha256_crypt
 from .boostforms import LoginForm, RegisterForm, SoloOrderForm
 from .models import User, db, socketio, ChatLog, Orders, join_room, ChatRoom
+from collections import OrderedDict
 import datetime
 
 mainbp = Blueprint('mainbp', __name__, template_folder='templates', static_folder='static')
@@ -121,6 +122,16 @@ def userdashboard():
 @mainbp.route('/order', methods=['GET', 'POST'])
 def order():
     form = SoloOrderForm()
+
+    if form.validate_on_submit():
+        current_league = form.current_league.data
+        current_division = form.current_division.data
+        current_lp = form.current_lp.data
+
+        desired_league = form.desired_league.data
+        desired_division = form.desired_division.data
+        desired_lp = form.desired_lp.data
+
     return render_template('order.html', form=form)
 
 @mainbp.route('/admindashboard')
@@ -146,24 +157,26 @@ def message_received(methods=['GET', 'POST']):
 @login_required
 def handle_client_msg(json, methods=['GET', 'POST']):
     print (str(json))
-    username = json['user_name']
-    
-    #Need Logic to put booster and Client in room
-    msg = ChatLog(json['message'], current_user.username, datetime.datetime.now(), room=request.sid)
 
-    user = User.query.filter(User.username == username).first()
-    print (user.role)
-    print (current_user.username)
+    #Get the user who sent the msg
+    user = User.query.filter(User.username == current_user.username).first()
+    
+    #Check to see if user is a client
     if current_user.username == user.username and user.role == "Client":
         booster = match_user_with_booster(user)
-
+        
+        #Create a room name
         roomname = str(current_user.username) + str(booster)
         cr = ChatRoom(roomname=roomname)
-        db.session.add(cr)
-        db.session.commit()
-        join_room(roomname)
-        socketio.emit('display_to_chat', json, room=roomname, callback=message_received)
-    elif user.role == "None":
+
+        try:
+            db.session.add(cr)
+            db.session.commit()
+        finally:
+            join_room(roomname)
+            socketio.emit('display_to_chat', json, room=roomname, callback=message_received)
+
+    elif user.role == "None": # Else was the user who sent the message a booster?
         user = match_booster_with_user(user)
         print ("User to booster"+ user)
         roomname = str(user) + str(current_user.username)
@@ -177,12 +190,17 @@ def handle_client_msg(json, methods=['GET', 'POST']):
     else:
         print (current_user.username)
         join_room(request.sid)
-    db.session.add(msg)
-    db.session.commit()
+
+    try:
+        msg = ChatLog(json['message'], current_user.username, datetime.datetime.now(), room=roomname)
+    finally:
+        db.session.add(msg)
+        db.session.commit()
     
 def handle_join_room(room):
     join_room(room)
 
+#Returned a booster that is assigned to a user
 def match_user_with_booster(user):
     print ("User sent MSG")
     order = Orders.query.filter(Orders.user_id==user.id).first()
@@ -190,6 +208,7 @@ def match_user_with_booster(user):
     print ("SEnding to " + order.booster_assigned)
     return order.booster_assigned
 
+#Returns a user that the booster is assigned to
 def match_booster_with_user(booster):
     print ("Booster Sent MSG")
     order = Orders.query.filter(Orders.booster_assigned==booster.username).first()
@@ -197,3 +216,14 @@ def match_booster_with_user(booster):
     print ("Sending to " + customer.username)
 
     return customer.username
+
+def determine_soloOrder_pricing():
+
+    ranks = { 1 : 'Bronze 5', 2 : 'Bronze 4', 3 : 'Bronze 3', 4 : 'Bronze 2', 5 : 'Bronze 1',
+     6 : 'Silver 5', 7 : 'Silver 4', 8 : 'Silver 3', 9 : 'Silver 2', 10 : 'Silver 1',
+     11 : 'Gold 5', 12 : 'Gold 4', 13 : 'Gold 3', 14 : 'Gold 2', 15 : 'Gold 1',
+     16 : 'Platinum 5', 17 : 'Platinum 4', 18 : 'Platinum 3', 19 : 'Platinum 2', 20 : 'Platinum 1',
+     21 : 'Diamond 5', 22 : 'Diamond 4', 23 : 'Diamond 3', 24 : 'Diamond 2' , 25 : 'Diamond 1',
+     26 : 'Master', 27 : 'Challenger'}
+
+    one_league = 5

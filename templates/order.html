@@ -6,9 +6,19 @@
 
 {% block content %}
 <p>Order Form</p>
-        <form>
-              {{ form.current_league }}
-              {{ form.current_division }}
-              {{ form.current_lp }}
+<div class="features">
+        <form method="POST">
+                  {{ form.hidden_tag() }}
+              {{ form.current_league }} {{ form.current_league.label }}
+              {{ form.current_division }} {{form.current_division.label }}
+              {{ form.current_lp }} {{form.current_lp.label}}
+        </div>
+        <div>
+              {{ form.desired_league }} {{form.desired_league.label}}
+              {{ form.desired_division }} {{form.desired_division.label}}
+              {{ form.desired_lp }}  {{form.desired_lp.label}}
+            </div>
+            <button class="btn-test" type="submit">Purchase</button>
         </form>
+
 {% endblock %}
