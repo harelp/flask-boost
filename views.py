@@ -48,34 +48,6 @@ def login():
     return render_template('login.html', form=form)
 
 
-@mainbp.route('/boosterlogin', methods=["GET", "POST"])
-def boosterlogin():
-    form = LoginForm()
-
-    if form.validate_on_submit():
-        submitted_username = form.username.data
-        submitted_username = str(submitted_username)
-        submitted_username = submitted_username.lower()
-
-        booster = Booster.query.filter(func.lower(Booster.booster_name)==submitted_username).first()
-        print (booster.booster_name)
-        if booster:
-            print (booster.password)
-            print (form.password.data)
-            if booster.booster_name.lower() == submitted_username.lower():
-                if sha256_crypt.verify(form.password.data, booster.password):
-                    login_user(booster, remember=form.remember.data)
-                    return redirect(request.args.get('next') or url_for('.index'))
-                else:
-                     return '<h1> Wrong Password </h1>'
-            else:
-                return '<h1> Invalid Login </h1>'
-        else:
-            return '<h1> Invalid Login </h1>'
-
-    return render_template('boosterlogin.html', form=form)
-
-
 @mainbp.route('/logout')
 @login_required
 def logout():
