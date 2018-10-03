@@ -5,10 +5,12 @@ from sqlalchemy import func
 from flask_wtf import FlaskForm
 #from wtforms import StringField, PasswordField, BooleanField
 from passlib.hash import sha256_crypt
-from .boostforms import LoginForm, RegisterForm, SoloOrderForm
-from .models import User, db, socketio, ChatLog, Orders, join_room, ChatRoom
+from boostforms import LoginForm, RegisterForm, SoloOrderForm
+from models import User, ChatLog, Orders, ChatRoom
 from collections import OrderedDict
 import datetime
+
+from quickboosters import app, db, socketio
 
 mainbp = Blueprint('mainbp', __name__, template_folder='templates', static_folder='static')
 

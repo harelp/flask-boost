@@ -1,12 +1,9 @@
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
-from flask_socketio import SocketIO, join_room
+
 import datetime
-
-db = SQLAlchemy()
-socketio = SocketIO()
-
+from quickboosters import db
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -22,6 +19,14 @@ class User(UserMixin, db.Model):
         self.password = password
         self.role = role
 
+class ChatRoom(db.Model):
+    __tablename__ = 'chatroom'
+    id = db.Column(db.Integer, primary_key=True)
+    roomname = db.Column(db.String(50), nullable=False, unique=True)
+
+    def __init__(self, roomname):
+        self.roomname = roomname
+
 class ChatLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     message = db.Column(db.String(100), nullable=False)
@@ -34,14 +39,6 @@ class ChatLog(db.Model):
         self.userfrom = userfrom
         self.created_date = created_date
         self.room = room
-
-class ChatRoom(db.Model):
-    __tablename__ = 'chatroom'
-    id = db.Column(db.Integer, primary_key=True)
-    roomname = db.Column(db.String(50), nullable=False, unique=True)
-
-    def __init__(self, roomname):
-        self.roomname = roomname
 
 '''class Booster_Attributes(db.Model):
     balance = db.Column(db.Float)
@@ -59,7 +56,7 @@ class Orders(db.Model):
     order_type = db.Column(db.String(30), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     order_amount = db.Column(db.Float, nullable=False)
-    booster_assigned = db.Column(db.String(20), db.ForeignKey('user.username'))
+    booster_assigned = db.Column(db.String(20), db.ForeignKey('users.username'))
 
     def __init__(order_type, user_id, order_amount, booster_assigned="None"):
         self.message = message
