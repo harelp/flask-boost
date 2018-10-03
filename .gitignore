@@ -4,4 +4,7 @@
 *.pyc
 .vscode
 __pycache__
-__init__.pyc
+quickbooster-venv/
+sqlite3.exe
+rami.db
+
