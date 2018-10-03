@@ -90,7 +90,11 @@ def booster_register():
 @mainbp.route('/userdashboard')
 @login_required
 def userdashboard():
-    return render_template('userdashboard.html', name=current_user.username)
+    return render_template('members.html', name=current_user.username)
+
+@mainbp.route('/members')
+def memberdashboard():
+    return render_template('members.html')
 
 
 @mainbp.route('/order', methods=['GET', 'POST'])
