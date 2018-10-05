@@ -849,6 +849,7 @@ margin-bottom : 0.5em 0;
   grid-area: chat;
   border: 1px solid #ddd;
   box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  font-size: 0.7rem;
 }
 
 .match {
@@ -1100,6 +1101,68 @@ padding-right: 1rem;
 
 .rank-box-contain img {
   max-width: 150px;
+}
+
+/* Chatbox */
+
+.chatbox {
+  margin: 1.5rem 2rem;
+  overflow-x: auto;
+  
+}
+
+.chatbox-content {
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.message {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0.6rem 0 0 1.5rem;
+}
+
+.username {
+display: block
+}
+
+.chat-text {
+  display: block
+}
+
+.chat img {
+  max-width: 50px;
+  border-radius: 5px;
+}
+
+.send-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto 2rem;
+}
+
+.send-text {
+  width: 100%;
+  border: 3px solid #ef7752;
+  padding: 5px;
+  height: 20px;
+  border-radius: 2px;
+  outline: none;
+  color: #ef7752;
+}
+
+.send-btn {
+  margin-left: -15px;
+  width: 80px;
+  height: 36px;
+  border: 1px solid #ef7752;
+  background: #ef7752;
+  text-align: center;
+  color: #fff;
+  border-radius: 2px;
+  cursor: pointer;
+  font-size: 13px;
 }
 
 
